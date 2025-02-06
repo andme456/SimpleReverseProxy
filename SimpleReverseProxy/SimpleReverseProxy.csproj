@@ -13,8 +13,8 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <PackageId>SimpleReverseProxy</PackageId>
-        <PackageReadmeFile>..\ReadMe.md</PackageReadmeFile>
-        <Version>0.0.1</Version>
+        <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+        <Version>0.0.2</Version>
         <Authors>Andrii Melnyk</Authors>
         <Company>Self emp</Company>
         <Description>A lightweight and simple reverse proxy middleware for ASP.NET Core applications. Enables routing and forwarding HTTP requests to configured destinations with support for request/response streaming.</Description>
@@ -23,4 +23,8 @@
         <RepositoryUrl>https://github.com/andme456/SimpleReverseProxy</RepositoryUrl>
         <PackageTags>reverse-proxy;middleware;aspnetcore;proxy;http</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="ReadMe.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>
