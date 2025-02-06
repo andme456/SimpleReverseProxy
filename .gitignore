@@ -1,0 +1,80 @@
+## See the comments below for more info on how to add exceptions for your
+## content.
+
+## Git files
+*.orig
+*.DS_STORE
+*.DS_Store
+
+## VISUAL STUDIO FILES ##
+.vs/
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Roslyn cache directories
+*.ide/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet Packages
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+*.nupkg
+
+
+# Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# deploy folder
+**/webdeploypackages/*
+**/Log/*
+**/Logs/*
+
+# StyleCop cache
+StyleCop.Cache
+
+# .NET Core
+project.lock.json
+#Test results
+src/TestResults.xml
+
+# Generated emails
+*.eml
+
+**/node_modules
+**/dist
+
+**/wwwroot/*
