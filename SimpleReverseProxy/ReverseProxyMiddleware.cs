@@ -65,7 +65,7 @@ public class SimpleReverseProxyMiddleware
             CancellationTokenSource ctsTs = new(TimeSpan.FromSeconds(100));
             var cancellationToken = ctsTs.Token;
             targetUri = BuildTargetUri(context.Request, destinationUri);
-            
+
             _logger.LogInformation("Forwarding request to {targetUri}", targetUri);
 
             var targetRequestMessage = await CreateTargetMessageAsync(context, targetUri, cancellationToken);
@@ -76,8 +76,9 @@ public class SimpleReverseProxyMiddleware
                 targetRequestMessage,
                 HttpCompletionOption.ResponseHeadersRead,
                 cancellationToken);
-                
-            _logger.LogInformation("Response from {targetUri}: code:{statusCode}", targetUri, responseMessage.StatusCode);
+
+            _logger.LogInformation("Response from {targetUri}: code:{statusCode}", targetUri,
+                responseMessage.StatusCode);
         }
         catch (Exception e)
         {
@@ -113,25 +114,40 @@ public class SimpleReverseProxyMiddleware
     {
         var requestMethod = context.Request.Method;
 
-        if (!HttpMethods.IsGet(requestMethod) &&
-            !HttpMethods.IsHead(requestMethod) &&
-            !HttpMethods.IsDelete(requestMethod) &&
-            !HttpMethods.IsTrace(requestMethod))
+        var bodyExists = !HttpMethods.IsGet(requestMethod) &&
+                         !HttpMethods.IsHead(requestMethod) &&
+                         !HttpMethods.IsDelete(requestMethod) &&
+                         !HttpMethods.IsTrace(requestMethod);
+
+        if (bodyExists)
         {
             context.Request.EnableBuffering();
-            var stream = context.Request.Body;
-            
+            var originalStream = context.Request.Body;
+
             var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream, cancellationToken);
-            stream.Position = 0;
-            
-            var streamContent = new StreamContent(memoryStream);
-            requestMessage.Content = streamContent;
+            await originalStream.CopyToAsync(memoryStream, cancellationToken);
+            originalStream.Position = 0;
+            memoryStream.Position = 0;
+
+            requestMessage.Content = new StreamContent(memoryStream);
+            ;
         }
 
         foreach (var header in context.Request.Headers)
         {
-            requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            if (bodyExists && header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var added = requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            if (added == false)
+            {
+                if (requestMessage.Content != null)
+                {
+                    requestMessage.Content.Headers.Add(header.Key, header.Value.ToArray());
+                }
+            }
         }
     }
 
